@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Help Center — Keyhold Rentals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#121210;
+    --charcoal:#3a3a36;
+    --paper:#faf8f4;
+    --paper-dim:#f1eee6;
+    --hairline:#ddd8cc;
+    --blue:#1cc0d4;
+    --brass-soft:#e9dfc7;
+    --white:#ffffff;
+    --radius:2px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--black);
+    font-family:'Archivo', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;}
+
+  ::selection{background:var(--black); color:var(--paper);}
+
+  
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:96px 6vw 64px;
+    background:white;
+    color:var(--black);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    right:-10%;
+    top:-30%;
+    width:520px;height:520px;
+    border:1px solid rgb(51 51 49 / 74%);
+    border-radius:50%;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    right:2%;
+    top:8%;
+    width:340px;height:340px;
+    border:1px solid rgb(177 175 172 / 94%);
+    border-radius:50%;
+  }
+  .eyebrow{
+  
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--black);
+    margin:0 0 18px;
+  }
+  .hero h1{
+   
+    font-weight:500;
+    font-size:clamp(38px, 5.6vw, 68px);
+    line-height:1.02;
+    margin:0 0 22px;
+    max-width:14ch;
+  }
+  .hero p{
+    font-size:17px;
+    line-height:1.6;
+    max-width:46ch;
+    
+    margin:0 0 36px;
+  }
+
+  .search-box{
+    max-width:520px;
+    display:flex;
+    align-items:center;
+    background:var(--paper);
+    border-radius:var(--radius);
+    padding:4px;
+  }
+  .search-box input{
+    flex:1;
+    border:none;
+    background:transparent;
+    padding:14px 16px;
+    font-family:'Archivo', sans-serif;
+    font-size:15px;
+    color:var(--black);
+    outline:none;
+  }
+  .search-box button{
+    background:var(--charcoal);
+    color:var(--paper);
+    border:none;
+    padding:12px 22px;
+    font-family:'Archivo', sans-serif;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    cursor:pointer;
+    border-radius:var(--radius);
+    transition:background .15s ease;
+  }
+  .search-box button:hover{background:var(--blue);}
+  #no-results-hint{
+    margin-top:14px;
+    font-size:13px;
+    color:#a9a59a;
+    display:none;
+  }
+
+  /* ---------- Layout ---------- */
+  .wrap{
+    display:grid;
+    grid-template-columns:240px 1fr;
+    gap:64px;
+    padding:64px 6vw 120px;
+    max-width:1240px;
+    margin:0 auto;
+    align-items:start;
+  }
+
+  .cat-nav{
+    position:sticky;
+    top:88px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .cat-nav-title{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:#8a867a;
+    margin:0 0 14px;
+  }
+  .cat-btn{
+    text-align:left;
+    background:none;
+    border:none;
+    border-left:2px solid transparent;
+    padding:10px 0 10px 14px;
+    font-family:'Archivo', sans-serif;
+    font-size:14.5px;
+    color:var(--charcoal);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .cat-btn:hover{color:var(--black);}
+  .cat-btn.active{
+    border-left-color:var(--black);
+    color:var(--black);
+    font-weight:600;
+  }
+  .cat-count{
+    color:#a9a59a;
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    margin-left:6px;
+  }
+
+  /* ---------- FAQ groups ---------- */
+  .faq-group{
+    margin-bottom:56px;
+  }
+  .faq-group-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:8px;
+    border-bottom:1px solid var(--hairline);
+    padding-bottom:14px;
+  }
+  .faq-group-head .tag-icon{
+    width:26px;height:26px;
+    border:1.5px solid var(--black);
+    border-radius:50%;
+    position:relative;
+    flex:none;
+  }
+  .faq-group-head .tag-icon::after{
+    content:"";
+    position:absolute;
+    top:50%;left:50%;
+    width:6px;height:6px;
+    background:var(--black);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+  }
+  .faq-group-head h2{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:26px;
+    margin:0;
+  }
+  .faq-group-head p{
+    margin:0 0 0 auto;
+    font-size:13px;
+    color:#8a867a;
+    font-family:'Space Mono', monospace;
+  }
+
+  .faq-item{
+    border-bottom:1px solid var(--hairline);
+  }
+  .faq-q{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    background:none;
+    border:none;
+    text-align:left;
+    padding:22px 0;
+    cursor:pointer;
+    font-family:'Archivo', sans-serif;
+    font-weight:600;
+    font-size:16.5px;
+    color:var(--black);
+  }
+  .faq-q .plus{
+    flex:none;
+    width:22px;height:22px;
+    position:relative;
+  }
+  .faq-q .plus::before,
+  .faq-q .plus::after{
+    content:"";
+    position:absolute;
+    background:var(--black);
+    transition:transform .25s ease, opacity .25s ease;
+  }
+  .faq-q .plus::before{
+    left:0;top:50%;width:100%;height:1.5px;
+    transform:translateY(-50%);
+  }
+  .faq-q .plus::after{
+    top:0;left:50%;width:1.5px;height:100%;
+    transform:translateX(-50%);
+  }
+  .faq-item.open .faq-q .plus::after{
+    transform:translateX(-50%) rotate(90deg);
+    opacity:0;
+  }
+  .faq-a{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+  .faq-a-inner{
+    padding:0 0 24px;
+    max-width:66ch;
+    color:var(--charcoal);
+    font-size:15px;
+    line-height:1.7;
+  }
+  .faq-a-inner a.link{
+    color:var(--black);
+    text-decoration:underline;
+    text-decoration-color:var(--brass);
+    text-underline-offset:3px;
+  }
+
+  mark{
+    background:var(--brass-soft);
+    color:var(--black);
+    padding:0 1px;
+  }
+
+  /* ---------- CTA ---------- */
+  .cta{
+    background:var(--black);
+    color:var(--paper);
+    padding:72px 6vw;
+    text-align:center;
+  }
+  .cta h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:clamp(26px,3vw,36px);
+    margin:0 0 12px;
+  }
+  .cta p{
+    color:#c9c5b9;
+    margin:0 0 28px;
+    font-size:15px;
+  }
+  .cta-buttons{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .btn{
+    padding:13px 26px;
+    border-radius:var(--radius);
+    font-size:13.5px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    text-decoration:none;
+    text-transform:uppercase;
+    transition:opacity .15s ease;
+  }
+  .btn-primary{
+    background:var(--paper);
+    color:var(--black);
+  }
+  .btn-outline{
+    border:1px solid rgba(250,248,244,0.35);
+    color:var(--paper);
+  }
+  .btn:hover{opacity:0.82;}
+
+  
+
+  @media (max-width: 860px){
+    .wrap{grid-template-columns:1fr; gap:32px; padding:48px 6vw 90px;}
+    .cat-nav{
+      position:static;
+      flex-direction:row;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .cat-btn{
+      border-left:none;
+      border:1px solid var(--hairline);
+      border-radius:20px;
+      padding:8px 14px;
+    }
+    .cat-btn.active{background:var(--black); color:var(--paper); border-color:var(--black);}
+    
+    .hero{padding:64px 6vw 48px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .faq-a, .faq-q .plus::before, .faq-q .plus::after{transition:none;}
+  }
+
+  button:focus-visible, input:focus-visible, a:focus-visible{
+    outline:2px solid var(--brass);
+    outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+{% extends "base.html" %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Frequently Asked Questions</p>
+  <h1>Answers, before you ask twice.</h1>
+  <p>Everything about booking, deposits, move-in day and getting your property back in one piece — straight from the people who wrote the lease.</p>
+  <div class="search-box">
+    <input type="text" id="search" placeholder="Search, e.g. “security deposit” or “late return”" />
+    <button id="search-btn">Search</button>
+  </div>
+  <p id="no-results-hint">No matches — try a shorter word, or browse by category below.</p>
+</section>
+
+<div class="wrap">
+  <aside class="cat-nav" id="cat-nav">
+    <p class="cat-nav-title">Browse by topic</p>
+    <button class="cat-btn active" data-cat="all">All questions</button>
+    <button class="cat-btn" data-cat="booking">Booking &amp; Leases</button>
+    <button class="cat-btn" data-cat="payments">Payments &amp; Deposits</button>
+    <button class="cat-btn" data-cat="movein">Move-In &amp; Move-Out</button>
+    <button class="cat-btn" data-cat="care">Property Care &amp; Damage</button>
+    <button class="cat-btn" data-cat="cancel">Cancellations</button>
+    <button class="cat-btn" data-cat="account">Account &amp; Support</button>
+  </aside>
+
+  <main id="faq-main">
+
+    <div class="faq-group" data-cat="booking">
+      <div class="faq-group-head">
+        <span class="tag-icon"></span>
+        <h2>Booking &amp; Leases</h2>
+        <p>05 questions</p>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">How do I book a property on Keyhold?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Choose a listing, select your dates, and submit a request. Most owners respond within 24 hours. Once approved, you'll receive a digital lease to review and sign before your card is charged.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">What's the difference between a short-term and long-term lease?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Short-term stays (under 30 days) are billed nightly with a simplified agreement. Long-term leases (a month or more) use a full rental agreement covering rent, deposit, and return terms, similar to a standard tenancy contract.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Can I negotiate the rental terms with the owner?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes. Message the owner directly before signing — rate, included utilities, and move-in date are the most commonly adjusted terms. Once both sides agree, the lease updates automatically.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Do I need to sign anything before paying?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes. Payment is only collected after you've reviewed and signed the rental agreement, which spells out the rate, deposit, and the return-of-property terms in full.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Can I extend my rental period once it's started?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Request an extension from your booking page before your original end date. It's subject to the owner's availability and approval, and any new dates are added to your lease in writing.</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group" data-cat="payments">
+      <div class="faq-group-head">
+        <span class="tag-icon"></span>
+        <h2>Payments &amp; Deposits</h2>
+        <p>04 questions</p>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">How much is the security deposit, and when is it charged?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Deposit amounts are set per listing and shown before checkout. It's charged at the same time as your first payment and held separately until you return the property.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">When do I get my deposit back?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Within 7–10 business days of return, once both parties confirm the walk-through inspection. If there are deductions for damage, missing items, or cleaning, you'll receive an itemized statement first.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">What happens if I return the property late?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">You'll continue to be charged at your agreed rate for each additional day, plus a late fee where stated in your lease, until the property is returned and confirmed by the owner.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Are cleaning fees separate from the deposit?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Routine end-of-stay cleaning is usually included in your booking total. Excessive mess beyond normal use is instead deducted from your security deposit, not billed separately.</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group" data-cat="movein">
+      <div class="faq-group-head">
+        <span class="tag-icon"></span>
+        <h2>Move-In &amp; Move-Out</h2>
+        <p>05 questions</p>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">What should I check when I first move in?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Walk through with the move-in checklist sent to your email, photograph any existing damage, and confirm it matches the listing. This protects your deposit at move-out.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">What condition does the property need to be returned in?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">The same condition it was handed over in, normal wear and tear excepted — all keys, accessories, and included items returned, and reasonably clean.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Do I need to be present for the return inspection?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">It's recommended but not required. If you can't attend, the owner will complete the inspection, document it with photos, and share the report with you the same day.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Can I return the property somewhere other than where I picked it up?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Only if agreed in writing with the owner beforehand. Returning to an unauthorized location may incur an additional handling fee.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">What if I return early?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">You're welcome to return before your end date, but it doesn't automatically entitle you to a partial refund unless that's stated in your specific agreement. If it countinue multiple times then security deposit will be seize.</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group" data-cat="care">
+      <div class="faq-group-head">
+        <span class="tag-icon"></span>
+        <h2>Property Care &amp; Damage</h2>
+        <p>03 questions</p>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">What counts as "normal wear and tear"?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Minor scuffs, faded paint, or worn carpet from ordinary use over time. It does not cover stains, broken fixtures, missing items, or damage from misuse.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">I accidentally damaged something — what should I do?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Report it to the owner as soon as it happens, ideally with a photo. Being upfront usually keeps the resolution simple and limited to the actual repair cost.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Am I liable if the property is stolen or lost during my rental?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes, you're responsible for the property while it's in your care. We recommend renters carry appropriate insurance for higher-value bookings.</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group" data-cat="cancel">
+      <div class="faq-group-head">
+        <span class="tag-icon"></span>
+        <h2>Cancellations</h2>
+        <p>03 questions</p>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Can I cancel a booking before it starts?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes, from your bookings page. Refund amounts depend on the listing's cancellation policy and how close to the start date you cancel.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Can an owner cancel on me?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Rarely, and only for cause outlined in the lease, such as a serious breach. If it happens, you're fully refunded and our team helps you find an alternative.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">How long do refunds take to process?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">5–7 business days back to your original payment method, once the cancellation is confirmed.</div></div>
+      </div>
+    </div>
+
+    <div class="faq-group" data-cat="account">
+      <div class="faq-group-head">
+        <span class="tag-icon"></span>
+        <h2>Account &amp; Support</h2>
+        <p>03 questions</p>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">How do I reach my property owner directly?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Use the messaging thread on your booking page. All communication is logged there so it's easy to reference if a dispute comes up later.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">What if I disagree with a deposit deduction?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Reply to the itemized statement within 5 days with your own photos or notes. Our support team will review both sides and mediate if needed.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q"><span class="q-text">Is my payment information secure?</span><span class="plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes — payments are processed through an encrypted, PCI-compliant provider. Keyhold staff never see or store your full card details.</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+<!-- 
+<section class="cta">
+  <h3>Still holding a question?</h3>
+  <p>Our support team replies within a few hours, every day of the week.</p>
+  <div class="cta-buttons">
+    <a href="#" class="btn btn-primary">Message support</a>
+    <a href="#" class="btn btn-outline">View sample lease</a>
+  </div>
+</section> -->
+
+
+
+<script>
+  // Accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      if(isOpen){
+        item.classList.remove('open');
+        a.style.maxHeight = null;
+      } else {
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // Category filter
+  const catBtns = document.querySelectorAll('.cat-btn');
+  const groups = document.querySelectorAll('.faq-group');
+  catBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      catBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.dataset.cat;
+      groups.forEach(g => {
+        g.style.display = (cat === 'all' || g.dataset.cat === cat) ? '' : 'none';
+      });
+      document.getElementById('search').value = '';
+      clearHighlights();
+      document.getElementById('no-results-hint').style.display = 'none';
+    });
+  });
+
+  // Search
+  const searchInput = document.getElementById('search');
+  const searchBtn = document.getElementById('search-btn');
+  const hint = document.getElementById('no-results-hint');
+
+  function clearHighlights(){
+    document.querySelectorAll('mark').forEach(m => {
+      const parent = m.parentNode;
+      parent.replaceChild(document.createTextNode(m.textContent), m);
+      parent.normalize();
+    });
+  }
+
+  function runSearch(){
+    const term = searchInput.value.trim().toLowerCase();
+    clearHighlights();
+    catBtns.forEach(b => b.classList.remove('active'));
+    document.querySelector('.cat-btn[data-cat="all"]').classList.add('active');
+
+    if(term.length === 0){
+      groups.forEach(g => g.style.display = '');
+      document.querySelectorAll('.faq-item').forEach(i => i.style.display = '');
+      hint.style.display = 'none';
+      return;
+    }
+
+    let anyMatch = false;
+    groups.forEach(g => {
+      let groupHasMatch = false;
+      g.querySelectorAll('.faq-item').forEach(item => {
+        const qText = item.querySelector('.q-text');
+        const aText = item.querySelector('.faq-a-inner');
+        const combined = (qText.textContent + ' ' + aText.textContent).toLowerCase();
+        if(combined.includes(term)){
+          item.style.display = '';
+          groupHasMatch = true;
+          anyMatch = true;
+          if(qText.textContent.toLowerCase().includes(term)){
+            const re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+            qText.innerHTML = qText.textContent.replace(re, '<mark>$1</mark>');
+          }
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      g.style.display = groupHasMatch ? '' : 'none';
+    });
+
+    hint.style.display = anyMatch ? 'none' : 'block';
+  }
+
+  searchBtn.addEventListener('click', runSearch);
+  searchInput.addEventListener('keydown', e => { if(e.key === 'Enter') runSearch(); });
+  searchInput.addEventListener('input', () => { if(searchInput.value.trim() === '') runSearch(); });
+</script>
+
+{% endblock %}
+</body>
+</html>

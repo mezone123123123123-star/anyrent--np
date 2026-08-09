@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}About AnyRent — Rent Anything, Anytime{% endblock %}
+
+{% block head %}
+<style>
+  html { scroll-padding-top: calc(var(--nav-h) + 64px); }
+  section[id] { scroll-margin-top: calc(var(--nav-h) + 64px); }
+</style>
+{% endblock %}
+
+{% block content %}
+    <nav class="subnav" aria-label="About page sections">
+      <div class="container">
+        <ul class="subnav-list" id="aboutSubnav">
+          <li><a class="subnav-link active" href="#purpose" aria-current="page">Purpose</a></li>
+          <li><a class="subnav-link" href="#why">Why AnyRent</a></li>
+          <li><a class="subnav-link" href="#story">Our story</a></li>
+          <li><a class="subnav-link" href="#team">Team</a></li>
+          <li><a class="subnav-link" href="#join">Join us</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="about-hero" aria-labelledby="about-hero-title">
+      <div class="hero-orb orb-one" aria-hidden="true"></div>
+      <div class="hero-orb orb-two" aria-hidden="true"></div>
+      <div class="container text-center position-relative">
+        <div class="eyebrow reveal justify-content-center"><span class="pulse-dot" aria-hidden="true"></span> About AnyRent</div>
+        <h1 id="about-hero-title" class="reveal">Access Anything.<br><span>Own Nothing.</span></h1>
+        <p class="hero-lede reveal">AnyRent is transforming ownership. We make renting seamless, affordable, and sustainable across every category imaginable—from real estate and vehicles to high-end cameras and tools.</p>
+        <div class="about-hero-actions reveal justify-content-center">
+          <a class="btn btn-cta" href="{{ url_for('marketplace.items') }}">Explore Categories</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-space about-overview" id="purpose" aria-labelledby="purpose-title">
+      <!-- <div class="container">
+        <div class="section-heading text-center reveal">
+          <span class="eyebrow justify-content-center">Our mission</span>
+          <h2 id="purpose-title">Driven by Purpose</h2>
+          <p>We are building a future where access replaces ownership, empowering users to experience more while consuming less.</p>
+        </div>
+        <div class="row g-4 mt-2">
+          <div class="col-md-6 reveal">
+            <article class="mission-card">
+              <div class="about-icon" aria-hidden="true">⚡</div>
+              <h3>Ultimate Flexibility</h3>
+              <p>Why buy something you only need for a day, a week, or a month? AnyRent gives you the freedom to access premium gear, vehicles, and living spaces on your own terms without long-term commitments.</p>
+            </article>
+          </div>
+          <div class="col-md-6 reveal">
+            <article class="mission-card">
+              <div class="about-icon" aria-hidden="true">🌱</div>
+              <h3>Sustainable Living</h3>
+              <p>By promoting a circular sharing economy, we help reduce manufacturing demand and landfill waste. Renting maximizes item utility, making every product count for a cleaner planet.</p>
+            </article>
+          </div>
+        </div> -->
+      <!-- </div> -->
+    </section>
+
+    <section class="section-space why-section" id="why" aria-labelledby="why-title">
+      <div class="container">
+        <div class="section-heading text-center reveal">
+          <span class="eyebrow justify-content-center">The difference</span>
+          <h2 id="why-title" style="text-align: center; display: block; margin: auto;">Why Choose AnyRent?</h2>
+          <p>Designed to give you peace of mind, seamless accessibility, and financial freedom.</p>
+        </div>
+        <div class="row g-4 mt-2">
+          <div class="col-sm-6 col-lg-3 reveal">
+            <article class="feature-card value-card">
+              <div class="about-icon" aria-hidden="true">📦</div>
+              <h3>Endless Variety</h3>
+              <p>From apartments and luxury cars to DSLR cameras and power tools, find everything in one platform.</p>
+            </article>
+          </div>
+          <div class="col-sm-6 col-lg-3 reveal">
+            <article class="feature-card value-card">
+              <div class="about-icon" aria-hidden="true">🛡️</div>
+              <h3>Verified &amp; Safe</h3>
+              <p>Enjoy secure end-to-end payments, identity-verified users, and optional item insurance protection.</p>
+            </article>
+          </div>
+          <div class="col-sm-6 col-lg-3 reveal">
+            <article class="feature-card value-card">
+              <div class="about-icon" aria-hidden="true">💡</div>
+              <h3>Affordability First</h3>
+              <p>Save upfront costs. Pay only for the duration you actually use the item, vehicle, or property.</p>
+            </article>
+          </div>
+          <div class="col-sm-6 col-lg-3 reveal">
+            <article class="feature-card value-card">
+              <div class="about-icon" aria-hidden="true">⚡</div>
+              <h3>Seamless Booking</h3>
+              <p>Instant online reservations, clear communication channels, and fast handoffs in just a few clicks.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-space story-section" id="story" aria-labelledby="story-title">
+      <div class="container">
+        <div class="section-heading text-center reveal">
+          <span class="eyebrow justify-content-center">Our journey</span>
+          <h2 id="story-title" style="margin: auto;">From one shelf to a shared city.</h2>
+          <p>It started with a tent borrowed from a neighbour. It hasn't stopped since.</p>
+        </div>
+        <ol class="story-timeline mt-5">
+          <li class="timeline-item reveal">
+            <span class="timeline-year">2023</span>
+            <div class="timeline-body">
+              <h3>The idea</h3>
+              <p>A camping trip needed a tent nobody wanted to buy. The first listing went live that weekend.</p>
+            </div>
+          </li>
+          <li class="timeline-item reveal">
+            <span class="timeline-year">2024</span>
+            <div class="timeline-body">
+              <h3>The neighbourhood grows</h3>
+              <p>Kathmandu's first lenders signed on. Thousands of items moved from shelves into weekends.</p>
+            </div>
+          </li>
+          <li class="timeline-item reveal">
+            <span class="timeline-year">2025</span>
+            <div class="timeline-body">
+              <h3>Trust, engineered</h3>
+              <p>Verified profiles, protected payments, and the review system made sharing feel safe.</p>
+            </div>
+          </li>
+          <li class="timeline-item reveal">
+            <span class="timeline-year">Today</span>
+            <div class="timeline-body">
+              <h3>10,000+ neighbours</h3>
+              <p>A growing community across Kathmandu, Lalitpur, and Bhaktapur — and still just getting started.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section-space team-section" id="team" aria-labelledby="team-title">
+      <div class="container">
+        <div class="section-heading text-center reveal">
+          <span class="eyebrow justify-content-center">Meet the team</span>
+          <h2 id="team-title" style="margin: auto;">Small team, big dreams.</h2>
+          <p>Builders, neighbours, and sharing-economy believers.</p>
+        </div>
+        <div class="row g-4 mt-2">
+          <div class="col-6 col-md-4 col-lg reveal">
+            <article class="team-card">
+              <div class="team-avatar avatar-a">R</div>
+              <h3>Rijesh Dhakal</h3>
+              <span class="team-role">Side Character</span>
+              <p>Started AnyRent so a good tent never sits idle again.</p>
+            </article>
+          </div>
+          <div class="col-6 col-md-4 col-lg reveal">
+            <article class="team-card">
+              <div class="team-avatar avatar-b">M</div>
+              <h3>Mezone Poudel</h3>
+              <span class="team-role">Main Character</span>
+              <p>Turns trust, payments, and listings into one smooth ride.</p>
+            </article>
+          </div>
+          <div class="col-6 col-md-4 col-lg reveal">
+            <article class="team-card">
+              <div class="team-avatar avatar-c">K</div>
+              <h3>Kushal Ghimire</h3>
+              <span class="team-role">Head of Community</span>
+              <p>Keeps reviews kind, handoffs smooth, and neighbours happy.</p>
+            </article>
+          </div>
+          <div class="col-6 col-md-4 col-lg reveal">
+            <article class="team-card">
+              <div class="team-avatar avatar-d">P</div>
+              <h3>Purna Tajpuriya</h3>
+              <span class="team-role">Design Lead</span>
+              <p>Designs the calm, human side of renting and lending.</p>
+            </article>
+          </div>
+          <div class="col-6 col-md-4 col-lg reveal">
+            <article class="team-card">
+              <div class="team-avatar avatar-e">I</div>
+              <h3>Ishan Pokhrel</h3>
+              <span class="team-role">Financial Advisor</span>
+              <p>Ensures the financial health and sustainability of the platform.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-stats" id="impact" aria-label="AnyRent community numbers">
+      <div class="container"><div class="row g-4 justify-content-center text-center">
+        <div class="col-6 col-md-3"><strong>50k+</strong><span>Active Users</span></div>
+        <div class="col-6 col-md-3"><strong>100k+</strong><span>Items Listed</span></div>
+        <div class="col-6 col-md-3"><strong>120+</strong><span>Categories</span></div>
+        <div class="col-6 col-md-3"><strong>4.9★</strong><span>Average Rating</span></div>
+      </div></div>
+    </section>
+
+    <!-- <section class="section-space faq-section" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-heading text-center reveal">
+          <span class="eyebrow justify-content-center">Good questions</span>
+          <h2 id="faq-title">Frequently asked.</h2>
+          <p>Everything people usually ask before their first rental.</p>
+        </div>
+        <div class="row justify-content-center mt-4">
+          <div class="col-lg-8">
+            <div class="accordion faq-accordion" id="aboutFaq">
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqOne" aria-expanded="true" aria-controls="faqOne">Is it safe to rent from strangers?</button>
+                </h3>
+                <div id="faqOne" class="accordion-collapse collapse show" data-bs-parent="#aboutFaq">
+                  <div class="accordion-body">Every profile is verified, payments are protected end to end, and both sides rate each other after every rental. Our community has an average rating of 4.9 out of 5.</div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqTwo" aria-expanded="false" aria-controls="faqTwo">How does the deposit work?</button>
+                </h3>
+                <div id="faqTwo" class="accordion-collapse collapse" data-bs-parent="#aboutFaq">
+                  <div class="accordion-body">A refundable security deposit is held for the duration of the rental and returned in full once the item comes back in good condition. Any damages are agreed on between both parties first.</div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqThree" aria-expanded="false" aria-controls="faqThree">Can I list my own things?</button>
+                </h3>
+                <div id="faqThree" class="accordion-collapse collapse" data-bs-parent="#aboutFaq">
+                  <div class="accordion-body">Absolutely. List an item in under a minute, set your price, and approve the renters you're comfortable with. Your things start earning — and doing more good — right away.</div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqFour" aria-expanded="false" aria-controls="faqFour">What if something goes wrong?</button>
+                </h3>
+                <div id="faqFour" class="accordion-collapse collapse" data-bs-parent="#aboutFaq">
+                  <div class="accordion-body">Real humans are here around the clock. Open a help ticket from your dashboard and our team will step in to sort out disputes fairly and quickly.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <section class="cta-section" id="join" aria-labelledby="join-title"></section>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+      (function () {
+        var subnav = document.getElementById('aboutSubnav');
+        if (!subnav || !('IntersectionObserver' in window)) return;
+        var links = Array.prototype.slice.call(subnav.querySelectorAll('.subnav-link'));
+        var targets = links.map(function (link) {
+          return document.querySelector(link.getAttribute('href'));
+        }).filter(Boolean);
+        if (!targets.length) return;
+        var observer = new IntersectionObserver(function (entries) {
+          var visible = entries.find(function (entry) { return entry.isIntersecting; });
+          if (!visible) return;
+          links.forEach(function (link) {
+            var isCurrent = link.getAttribute('href') === '#' + visible.target.id;
+            link.classList.toggle('active', isCurrent);
+            if (isCurrent) link.setAttribute('aria-current', 'page');
+            else link.removeAttribute('aria-current');
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+        targets.forEach(function (target) { observer.observe(target); });
+      })();
+    </script>
+{% endblock %}

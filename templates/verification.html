@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/verification.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="verify-page">
+    <div class="verify-panel">
+        <div class="verify-title">
+            <h1>Age, Citizenship, and Face Verification</h1>
+            <p>Upload your date of birth, citizenship information, a national ID image, and a selfie. This helps verify you are 18+ and matches your photo to your ID.</p>
+            <p><em>Age template training has been disabled.</em></p>
+        </div>
+
+        <div class="verify-status-row">
+            <div class="status-pill ok">Age verification</div>
+            <div class="status-pill ok">Citizenship verification</div>
+            <div class="status-pill ok">Selfie verification</div>
+        </div>
+
+        <form action="{{ url_for('verification.verify_user') }}" method="POST" enctype="multipart/form-data" class="verify-form">
+            <div class="field-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input id="date_of_birth" name="date_of_birth" type="date" required>
+                <small>Must be 18 years or older.</small>
+            </div>
+
+            <div class="field-group">
+                <label for="citizenship">Citizenship</label>
+                <input id="citizenship" name="citizenship" type="text" placeholder="Country name" autocomplete="country" required>
+                <small>This information is used to verify your account.</small>
+            </div>
+
+            <div class="field-group">
+                <label for="national_id">National ID image</label>
+                <input id="national_id" name="national_id" type="file" accept="image/*" required>
+                <small>Upload the front of your ID card.</small>
+            </div>
+
+            <div class="field-group camera-group">
+                <label for="selfie">Selfie photo</label>
+                <div class="camera-controls">
+                    <button type="button" id="open-camera-button" class="btn btn-ghost">Open camera</button>
+                    <button type="button" id="capture-selfie-button" class="btn btn-primary hidden">Capture selfie</button>
+                    <button type="button" id="stop-camera-button" class="btn btn-ghost hidden">Stop camera</button>
+                </div>
+                <div class="camera-frame">
+                    <video id="webcam-video" autoplay playsinline class="hidden"></video>
+                    <img id="selfie-preview" alt="Selfie preview" class="hidden">
+                    <p id="camera-unsupported" class="hint">Webcam capture is not supported by this browser.</p>
+                </div>
+                <input id="selfie" name="selfie" type="file" accept="image/*">
+                <small>Upload a selfie or capture one with your camera.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit verification</button>
+        </form>
+
+        {% if current_user.national_id_image or current_user.selfie_image %}
+            <div class="photo-preview-row">
+                {% if current_user.national_id_image %}
+                    <figure class="photo-preview">
+                        <img src="{{ url_for('static', filename='uploads/' + current_user.national_id_image) }}" alt="Uploaded national ID">
+                        <figcaption>National ID</figcaption>
+                    </figure>
+                {% endif %}
+                {% if current_user.selfie_image %}
+                    <figure class="photo-preview">
+                        <img src="{{ url_for('static', filename='uploads/' + current_user.selfie_image) }}" alt="Uploaded selfie">
+                        <figcaption>Selfie</figcaption>
+                    </figure>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if not face_supported %}
+            <div class="warning-box">
+                Face recognition is unavailable on this server because the required Python library is not installed. Install `face_recognition` and `dlib` to enable automated matching.
+            </div>
+        {% endif %}
+
+        <div class="verify-footer">
+            <p><strong>Note:</strong> Once verified, your age and citizenship status will be stored in your session and visible on your profile dashboard.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/verification.js') }}"></script>
+{% endblock %}

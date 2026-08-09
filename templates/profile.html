@@ -1,0 +1,818 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard — AnyRent{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="dash-layout">
+
+        <aside class="sidebar">
+            <div class="dash-brand">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.5 15.3 16 5.8l9.5 9.5v9.2a1.5 1.5 0 0 1-1.5 1.5H8a1.5 1.5 0 0 1-1.5-1.5v-9.2Z" fill="currentColor"/><path d="M12 26v-7a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v7" stroke="#14213D" stroke-width="2.3" stroke-linecap="round"/><path d="m11 13 2.1 2.1 4.4-4.5" stroke="#14213D" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <span>Any<span>Rent</span></span>
+            </div>
+
+            <nav class="side-nav" aria-label="Dashboard navigation">
+                <span class="nav-group-label">Menu</span>
+                <a class="nav-item active" href="{{ url_for('profile.profile') }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
+                    Dashboard
+                </a>
+                <a class="nav-item" href="#listings">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h13v16H8z"/><path d="M8 4l-4 3v13h4zM11 9h7M11 13h7M11 17h4"/></svg>
+                    My listings
+                    {% if my_items %}<span class="nav-badge">{{ my_items|length }}</span>{% endif %}
+                </a>
+                <a class="nav-item" href="#rentals">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 4.5 7.7v8.6l7.5 4.2 7.5-4.2V7.7L12 3.5Z"/><path d="m4.8 7.8 7.2 4 7.2-4M12 20.3v-8.5"/></svg>
+                    My rentals
+                    {% if pending_requests %}<span class="nav-badge lime">{{ pending_requests }}</span>{% endif %}
+                </a>
+                <a class="nav-item" href="#messages">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v11H9l-5 4V6Z"/><path d="M8 10h8M8 13h5"/></svg>
+                    Messages
+                    {% if unread_total %}<span class="nav-badge coral">{{ unread_total }}</span>{% endif %}
+                </a>
+                <a class="nav-item" href="#saved">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.9-8.6a5.5 5.5 0 0 0-.1-7.8Z"/></svg>
+                    Saved items
+                    {% if saved_items %}<span class="nav-badge">{{ saved_items|length }}</span>{% endif %}
+                </a>
+                <span class="nav-group-label">Account</span>
+                <a class="nav-item" href="#verify">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s8-3.7 8-10V5l-8-3-8 3v6c0 6.3 8 10 8 10Z"/><path d="m8.5 11.5 2.2 2.2 4.8-4.8"/></svg>
+                    Verification
+                    {% if user.verification_status == 'verified' %}<span class="nav-badge ok">✓</span>
+                    {% elif user.verification_status == 'pending' %}<span class="nav-badge pending">••</span>{% endif %}
+                </a>
+                <a class="nav-item" href="#personal">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3.5"/><path d="M5.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5"/></svg>
+                    Settings
+                </a>
+                <a class="nav-item" href="{{ url_for('marketplace.items') }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+                    Browse items
+                </a>
+                <a class="nav-item" href="{{ url_for('logout') }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8V5.5L4 12l10 6.5V16"/><path d="M9 12h11"/></svg>
+                    Log out
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                {% if user.is_verified %}
+                    <span class="verified-owner"><i aria-hidden="true">✓</i> Verified member</span>
+                    <p>Your identity is verified. You can rent and message on the marketplace.</p>
+                {% elif user.verification_status == 'pending' %}
+                    <span class="verified-owner pending"><i aria-hidden="true">…</i> Under review</span>
+                    <p>Your national ID is being reviewed by our team.</p>
+                {% else %}
+                    <span class="verified-owner muted"><i aria-hidden="true">!</i> Not verified</span>
+                    <p>Verify your identity to start renting.</p>
+                {% endif %}
+            </div>
+        </aside>
+
+        <div class="dash-main">
+
+            <div class="content">
+
+                <section class="card profile-hero">
+                    <div class="cover-strip" aria-hidden="true"></div>
+                    <div class="hero-row">
+                        <div class="avatar-wrap">
+                            <form action="{{ url_for('profile.upload_picture') }}" method="POST" enctype="multipart/form-data" id="pic-form">
+                                <div class="avatar">
+                                    {% if user.profile_pic %}
+                                        <img id="avatar-img" src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="{{ user.username }}'s profile picture">
+                                    {% else %}
+                                        <span id="avatar-img" class="avatar-fallback">{{ user.username[0]|upper }}</span>
+                                    {% endif %}
+                                </div>
+                                <label for="profile_pic_input" class="avatar-edit" title="Change profile picture" aria-label="Change profile picture">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16-1 5 5-1L19 8.5l-4-4L4 16Z"/><path d="m12.5 8 4 4"/></svg>
+                                </label>
+                                <input type="file" id="profile_pic_input" name="profile_pic" accept="image/*" hidden>
+                            </form>
+                        </div>
+                        <div class="hero-info">
+                            <div class="hero-name-row">
+                                <h2>{{ user.full_name if user.full_name else user.username }}</h2>
+                                {% if user.is_verified %}
+                                    <span class="badge-verified">✓ Verified</span>
+                                {% elif user.verification_status == 'pending' %}
+                                    <span class="badge-pending">⏳ Under review</span>
+                                {% else %}
+                                    <span class="badge-unverified">Verify to rent</span>
+                                {% endif %}
+                            </div>
+                            <p class="hero-handle">@{{ user.username }}</p>
+                            <p class="hero-location">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10.2c0 5.7-8 10.3-8 10.3S4 15.9 4 10.2a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10.2" r="2.6"/></svg>
+                                {{ user.location if user.location else 'Location not set' }}
+                            </p>
+                            <div class="hero-rating">
+                                <span aria-hidden="true">★★★★★</span> 4.9 <small>· community rating</small>
+                            </div>
+                        </div>
+                        <div class="hero-actions">
+                            <a href="#personal" class="btn btn-primary">Edit profile</a>
+                            <a href="#listings" class="btn btn-ghost">My listings</a>
+                        </div>
+                    </div>
+                </section>
+
+                {% if not user.is_verified %}
+                    <div class="verify-banner">
+                        <span class="verify-banner-icon" aria-hidden="true">{% if user.verification_status == 'pending' %}⏳{% else %}!{% endif %}</span>
+                        <div>
+                            {% if user.verification_status == 'pending' %}
+                                <strong>Verification under review.</strong>
+                                <p>Your national ID is being checked. You'll be able to rent as soon as it's approved.</p>
+                            {% else %}
+                                <strong>Verify your account to start renting.</strong>
+                                <p>Upload your national ID to unlock renting and messaging across the marketplace.</p>
+                            {% endif %}
+                        </div>
+                        <a href="#verify" class="btn btn-cta btn-sm">Verify now</a>
+                    </div>
+                {% endif %}
+
+                <section class="stats-grid" aria-label="Account statistics">
+                    <article class="stat-card"><span class="stat-icon lime" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg></span><div><strong>{{ my_items|length }}</strong><span>Active listings</span></div></article>
+                    <article class="stat-card"><span class="stat-icon indigo" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15 9.5c-.5-1-1.6-1.7-3-1.7-1.8 0-3.1.9-3.1 2.3 0 3.4 6.2 1.5 6.2 4.5 0 1.4-1.3 2.4-3.2 2.4-1.5 0-2.8-.7-3.4-1.8M12 6.5v11"/></svg></span><div><strong>Rs {{ '{:,}'.format(earnings) }}</strong><span>Earnings</span></div></article>
+                    <article class="stat-card"><span class="stat-icon coral" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.5 4.5 7.7v8.6l7.5 4.2 7.5-4.2V7.7L12 3.5Z"/><path d="m4.8 7.8 7.2 4 7.2-4M12 20.3v-8.5"/></svg></span><div><strong>{{ rented_count }}</strong><span>Items rented</span></div></article>
+                    <article class="stat-card"><span class="stat-icon sky" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20.5c4.5 0 8-3.2 8-7.8C20 7.3 15.4 4 12 4S4 7.3 4 12.7c0 4.6 3.5 7.8 8 7.8Z"/><path d="M12 20.5V11M12 14c-2.4.2-4.1-1-5-3.1M12 17c2.4.2 4.1-1 5-3.1"/></svg></span><div><strong>{{ pending_requests }}</strong><span>Pending requests</span></div></article>
+                </section>
+
+                <div class="content-grid">
+
+                    <div class="dash-column">
+
+                        <section class="card dash-section" id="listings">
+                            <div class="card-head split">
+                                <div>
+                                    <h3>My listings</h3>
+                                    <p>Items you're sharing with your community.</p>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('new-item-form').classList.toggle('hidden')">+ Add item</button>
+                            </div>
+
+                            <form id="new-item-form" class="add-item-form hidden" action="{{ url_for('profile.add_item') }}" method="POST" enctype="multipart/form-data" novalidate>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label for="item_name">Item name *</label>
+                                        <input id="item_name" name="name" type="text" placeholder="e.g. DJI Drone" required>
+                                    </div>
+                                    <div class="field">
+                                        <label for="item_category">Category *</label>
+                                        <select id="item_category" name="category" required>
+                                            <option value="Camera">Camera</option>
+                                            <option value="Music">Music</option>
+                                            <option value="Bike">Bike</option>
+                                            <option value="Electronics">Electronics</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label for="item_type">Type</label>
+                                        <input id="item_type" name="type" type="text" placeholder="e.g. Photography">
+                                    </div>
+                                    <div class="field">
+                                        <label for="item_location">Location</label>
+                                        <input id="item_location" name="location" type="text" placeholder="City or neighbourhood">
+                                    </div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label for="item_price">Price per day (Rs) *</label>
+                                        <input id="item_price" name="price" type="number" min="1" step="1" placeholder="500" required>
+                                    </div>
+                                    <div class="field">
+                                        <label for="item_quantity">Quantity in stock *</label>
+                                        <input id="item_quantity" name="quantity" type="number" min="1" step="1" value="1" placeholder="1" required>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="item_deposit">Deposit (Rs)</label>
+                                    <input id="item_deposit" name="deposit" type="number" min="0" step="1" placeholder="2000">
+                                </div>
+                                <div class="field">
+                                    <label for="item_image">Image URL</label>
+                                    <input id="item_image" name="image" type="url" placeholder="https://... (optional)">
+                                </div>
+                                <div class="field">
+                                    <label for="item_video">Showcase video</label>
+                                    <input id="item_video" name="video" type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v" class="video-input">
+                                    <span class="field-hint">MP4, WebM, OGG, MOV or M4V · max ~120 MB</span>
+                                    <video id="video-preview" class="video-preview hidden" controls muted playsinline></video>
+                                </div>
+                                <div class="field">
+                                    <label for="item_desc">Description</label>
+                                    <textarea id="item_desc" name="description" rows="3" placeholder="Tell renters what makes it great…"></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Publish listing</button>
+                                </div>
+                            </form>
+
+                            {% if my_items %}
+                                <div class="mini-grid">
+                                    {% for item in my_items %}
+                                        <div class="mini-card">
+                                            <div class="mini-thumb">
+                                                <img src="{{ item.image or 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=300&q=80' }}" alt="{{ item.name }}" loading="lazy">
+                                                {% if item.video %}<span class="thumb-badge" title="Has showcase video"><i class="fa-solid fa-play"></i></span>{% endif %}
+                                            </div>
+                                            <div class="mini-info">
+                                                <strong>{{ item.name }}</strong>
+                                                <span>{{ item.category }}{% if item.type %} · {{ item.type }}{% endif %}</span>
+                                                <span class="mini-loc"><i class="fa-solid fa-location-dot"></i> {{ item.location }}</span>
+                                            </div>
+                                            <div class="mini-side">
+                                                <span class="mini-price">Rs {{ '{:,}'.format(item.price) }}<small>/day</small></span>
+                                                {% if not item.available %}
+                                                    <span class="status-badge declined" title="Hidden from the marketplace, still kept here for you">Unavailable</span>
+                                                {% elif not item.is_approved %}
+                                                    <span class="status-badge pending">Pending approval</span>
+                                                {% elif item.quantity and item.quantity > 0 %}
+                                                    <span class="status-badge ok">Live · {{ item.quantity }} in stock</span>
+                                                {% else %}
+                                                    <span class="status-badge declined">Unavailable</span>
+                                                {% endif %}
+                                                <div style="margin-top:6px;">
+                                                    <a class="btn btn-ghost btn-sm" href="{{ url_for('profile.edit_item', item_id=item.id) }}">Edit</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="empty-note">You haven't listed anything yet. Add your first item — it appears on the marketplace instantly.</p>
+                            {% endif %}
+                        </section>
+
+                        <section class="card dash-section" id="rentals">
+                            <div class="card-head">
+                                <h3>My rentals</h3>
+                                <p>Requests you've made, and requests on your items.</p>
+                            </div>
+
+                            {% if not rentals_in and not rentals_out %}
+                                <p class="empty-note">No rentals yet. Head to the marketplace and rent something you need.</p>
+                            {% endif %}
+
+                            {% if rentals_out %}
+                                <h4 class="sub-heading">Requests on my items</h4>
+                                <div class="rental-list">
+                                    {% for r in rentals_out %}
+                                        <div class="rental-row">
+                                            <div class="rental-thumb"><img src="{{ r.item.image or 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=300&q=80' }}" alt="{{ r.item.name }}"></div>
+                                            <div class="rental-main">
+                                                <strong>{{ r.item.name }}</strong>
+                                                <span>@{{ r.renter.username }} · {{ r.start_date }} → {{ r.end_date }} · Rs {{ '{:,}'.format(r.total_amount) }}</span>
+                                            </div>
+                                            <div class="rental-actions">
+                                                <span class="status-badge {{ r.status }}">{{ r.status|capitalize }}</span>
+                                                {% if r.status == 'pending' %}
+                                                    <form method="POST" action="{{ url_for('profile.rental_action', rental_id=r.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>
+                                                    <form method="POST" action="{{ url_for('profile.rental_action', rental_id=r.id, action='decline') }}"><button class="btn btn-ghost btn-sm">Decline</button></form>
+                                                {% elif r.status == 'approved' %}
+                                                    <form method="POST" action="{{ url_for('profile.rental_action', rental_id=r.id, action='complete') }}"><button class="btn btn-primary btn-sm">Mark completed</button></form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if rentals_in %}
+                                <h4 class="sub-heading">My rental requests</h4>
+                                <div class="rental-list">
+                                    {% for r in rentals_in %}
+                                        <div class="rental-row">
+                                            <div class="rental-thumb"><img src="{{ r.item.image or 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=300&q=80' }}" alt="{{ r.item.name }}"></div>
+                                            <div class="rental-main">
+                                                <strong>{{ r.item.name }}</strong>
+                                                <span>@{{ r.owner.username }} · {{ r.start_date }} → {{ r.end_date }} · Rs {{ '{:,}'.format(r.total_amount) }}</span>
+                                            </div>
+                                            <div class="rental-actions">
+                                                <span class="status-badge {{ r.status }}">{{ r.status|capitalize }}</span>
+                                                {% if r.status == 'pending' %}
+                                                    <form method="POST" action="{{ url_for('profile.rental_action', rental_id=r.id, action='cancel') }}"><button class="btn btn-ghost btn-sm">Cancel</button></form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </section>
+
+                        <section class="card dash-section" id="messages">
+                            <div class="card-head">
+                                <h3>Messages</h3>
+                                <p>Conversations about items and rentals.</p>
+                            </div>
+
+                            {% if conversations %}
+                                <div class="convo-grid">
+                                    {% for convo in conversations %}
+                                        <div class="convo-card">
+                                            <div class="convo-head">
+                                                <span class="chip-avatar sm">{{ convo.other.username[0]|upper }}</span>
+                                                <div>
+                                                    <strong>@{{ convo.other.username }}</strong>
+                                                    <span>{% if convo.item %}about “{{ convo.item.name }}”{% else %}general chat{% endif %}</span>
+                                                </div>
+                                                {% if convo.unread %}<span class="status-badge pending">{{ convo.unread }} new</span>{% endif %}
+                                            </div>
+                                            <div class="msg-list">
+                                                {% for m in convo.messages %}
+                                                    <div class="msg {{ 'mine' if m.sender_id == user.id else '' }}">
+                                                        {% if m.body %}<p>{{ m.body }}</p>{% endif %}
+                                                        {% if m.image %}
+                                                            <a href="{{ url_for('static', filename='uploads/' + m.image) }}" target="_blank" rel="noopener" class="msg-attachment-link">
+                                                                <img class="msg-attachment msg-image" src="{{ url_for('static', filename='uploads/' + m.image) }}" alt="Attached image" loading="lazy">
+                                                            </a>
+                                                        {% endif %}
+                                                        {% if m.video %}
+                                                            <video class="msg-attachment msg-video" src="{{ url_for('static', filename='uploads/' + m.video) }}" controls muted playsinline preload="metadata"></video>
+                                                        {% endif %}
+                                                        <span>{{ m.created_at.strftime('%b %d, %H:%M') }}</span>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                            <form class="reply-form" method="POST" action="{{ url_for('profile.send_message') }}" enctype="multipart/form-data">
+                                                <input type="hidden" name="receiver_id" value="{{ convo.other.id }}">
+                                                {% if convo.item %}<input type="hidden" name="item_id" value="{{ convo.item.id }}">{% endif %}
+                                                <input type="text" name="body" placeholder="Write a reply…">
+                                                <label class="reply-attach" title="Attach an image"><i class="fa-solid fa-image"></i><input type="file" name="message_image" accept="image/*" hidden class="msg-img-input"></label>
+                                                <label class="reply-attach" title="Attach a video"><i class="fa-solid fa-video"></i><input type="file" name="message_video" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v" hidden class="msg-vid-input"></label>
+                                                <button type="submit" class="btn btn-primary btn-sm">Send</button>
+                                                <div class="reply-preview hidden">
+                                                    <img class="reply-preview-media hidden" alt="Image preview">
+                                                    <video class="reply-preview-media hidden" controls muted playsinline preload="metadata"></video>
+                                                    <button type="button" class="msg-clear">Remove</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="empty-note">No messages yet. Message an owner from any item page.</p>
+                            {% endif %}
+                        </section>
+
+                        <section class="card dash-section" id="saved">
+                            <div class="card-head">
+                                <h3>Saved items</h3>
+                                <p>Things you've hearted for later.</p>
+                            </div>
+
+                            {% if saved_items %}
+                                <div class="mini-grid two">
+                                    {% for item in saved_items %}
+                                        <div class="mini-card">
+                                            <div class="mini-thumb">
+                                                <img src="{{ item.image or 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=300&q=80' }}" alt="{{ item.name }}" loading="lazy">
+                                            </div>
+                                            <div class="mini-info">
+                                                <strong>{{ item.name }}</strong>
+                                                <span>{{ item.category }} · {{ item.location }}</span>
+                                            </div>
+                                            <div class="mini-side">
+                                                <span class="mini-price">Rs {{ '{:,}'.format(item.price) }}<small>/day</small></span>
+                                                <form method="POST" action="{{ url_for('marketplace.toggle_save', item_id=item.id) }}">
+                                                    <button class="btn btn-ghost btn-sm">Remove</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="empty-note">Nothing saved yet. Tap the heart on any marketplace item to keep it here.</p>
+                            {% endif %}
+                        </section>
+
+                        {% if current_user.is_admin %}
+                            <section class="card admin-earnings" id="admin-earnings">
+                                <div class="card-head">
+                                    <h3>Admin earnings</h3>
+                                    <p>Commission collected from rentals (20% deposit → 15% admin).</p>
+                                </div>
+                                <div class="card-body">
+                                    <div style="display:flex;align-items:center;gap:1rem;">
+                                        <div style="font-size:1.2rem;font-weight:800">Rs {{ admin_earnings }}</div>
+                                        <div style="color:var(--muted)">Total commissions: {{ admin_commission_count }}</div>
+                                    </div>
+                                    <p style="margin-top:0.6rem;color:var(--muted)">This counter shows total commission received from approved or completed rentals.</p>
+                                </div>
+                            </section>
+                        {% endif %}
+
+                        {% if current_user.is_admin and (pending_verifications or pending_items or pending_listing_changes or pending_rentals) %}
+                            <section class="card admin-approvals" id="admin-approvals">
+                                <div class="card-head">
+                                    <h3>Approvals</h3>
+                                    <p>Approve pending rentals, listings and verifications.</p>
+                                </div>
+                                <div class="card-body">
+                                    {% if pending_rentals %}
+                                        <h4 class="sub-heading">Pending rentals (orders)</h4>
+                                        <div class="rental-list">
+                                            {% for pr in pending_rentals %}
+                                                <div class="rental-row">
+                                                    <div class="rental-thumb"><img src="{{ pr.item.image or 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=300&q=80' }}" alt="{{ pr.item.name }}"></div>
+                                                    <div class="rental-main">
+                                                        <strong>{{ pr.item.name }}</strong>
+                                                        <span>Requested by @{{ pr.renter.username }} · {{ pr.start_date }} → {{ pr.end_date }} · Rs {{ '{:,}'.format(pr.total_amount) }}</span>
+                                                    </div>
+                                                    <div class="rental-actions">
+                                                        <form method="POST" action="{{ url_for('profile.admin_rental_action', rental_id=pr.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>
+                                                        <form method="POST" action="{{ url_for('profile.admin_rental_action', rental_id=pr.id, action='decline') }}"><button class="btn btn-ghost btn-sm">Decline</button></form>
+                                                        <form method="POST" action="{{ url_for('profile.admin_rental_action', rental_id=pr.id, action='complete') }}"><button class="btn btn-ghost btn-sm">Mark completed</button></form>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if pending_listing_changes %}
+                                        <h4 class="sub-heading" style="margin-top:12px;">Pending listing changes</h4>
+                                        <ul class="admin-list">
+                                            {% for ch in pending_listing_changes %}
+                                                <li>
+                                                    <div class="admin-meta">
+                                                        <strong>{{ ch.item.name }}</strong>
+                                                        <span>Proposed by @{{ ch.proposer.username }} · {{ ch.created_at.strftime('%b %d') }}</span>
+                                                    </div>
+                                                    <div class="admin-actions">
+                                                        <form method="POST" action="{{ url_for('profile.admin_listing_change_action', change_id=ch.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>
+                                                        <form method="POST" action="{{ url_for('profile.admin_listing_change_action', change_id=ch.id, action='reject') }}"><button class="btn btn-ghost btn-sm">Reject</button></form>
+                                                        <details style="margin-top:6px;"><summary>View proposed changes</summary>
+                                                            <pre style="white-space:pre-wrap;max-height:180px;overflow:auto;">{{ ch.new_data }}</pre>
+                                                        </details>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+
+                                    {% if pending_items %}
+                                        <h4 class="sub-heading" style="margin-top:12px;">Pending listings</h4>
+                                        <ul class="admin-list">
+                                            {% for it in pending_items %}
+                                                <li>
+                                                    <div class="admin-meta">
+                                                        <strong>{{ it.name }}</strong>
+                                                        <span>{{ it.category }} · {{ it.location }}</span>
+                                                    </div>
+                                                    <div class="admin-actions">
+                                                        <form method="POST" action="{{ url_for('profile.admin_item_action', item_id=it.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>
+                                                        <form method="POST" action="{{ url_for('profile.admin_item_action', item_id=it.id, action='reject') }}"><button class="btn btn-ghost btn-sm">Reject</button></form>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+
+                                    {% if pending_verifications %}
+                                        <h4 class="sub-heading" style="margin-top:12px;">Pending verifications</h4>
+                                        <ul class="admin-list">
+                                            {% for u in pending_verifications %}
+                                                <li>
+                                                    <div class="admin-meta">
+                                                        <strong>{{ u.username }}</strong>
+                                                        <span>{{ u.full_name if u.full_name else '—' }} · {{ u.email }}</span>
+                                                    </div>
+                                                    <div class="admin-actions">
+                                                        <form method="POST" action="{{ url_for('profile.admin_verify', user_id=u.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>
+                                                        <form method="POST" action="{{ url_for('profile.admin_verify', user_id=u.id, action='reject') }}"><button class="btn btn-ghost btn-sm">Reject</button></form>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            </section>
+                        {% endif %}
+
+                    </div>
+
+                    <aside class="side-stack">
+                        <section class="card verify-card" id="verify">
+                            <div class="card-head">
+                                <h3>Identity verification</h3>
+                                <p>Required to rent or message owners on AnyRent.</p>
+                            </div>
+
+                            {% if user.is_verified %}
+                                <div class="verify-status ok">
+                                    <span class="verify-status-icon" aria-hidden="true">✓</span>
+                                    <div>
+                                        <strong>You're verified!</strong>
+                                        <p>Your identity has been confirmed. You can rent and message across the marketplace.</p>
+                                    </div>
+                                </div>
+                            {% elif user.verification_status == 'pending' %}
+                                <div class="verify-status pending">
+                                    <span class="verify-status-icon" aria-hidden="true">⏳</span>
+                                    <div>
+                                        <strong>Verification under review</strong>
+                                        <p>Our team is reviewing your national ID. This usually takes a few minutes.</p>
+                                    </div>
+                                </div>
+                                {% if user.national_id_image %}
+                                    <img class="verify-preview" src="{{ url_for('static', filename='uploads/' + user.national_id_image) }}" alt="Your uploaded national ID">
+                                {% endif %}
+                            {% else %}
+                                <div class="verify-status">
+                                    <span class="verify-status-icon" aria-hidden="true">!</span>
+                                    <div>
+                                        <strong>Verify to start renting</strong>
+                                        <p>Upload your national ID and selfie through the dedicated verification page.</p>
+                                    </div>
+                                </div>
+                                <div class="verify-actions">
+                                    <a href="{{ url_for('verification.verify_user') }}" class="btn btn-primary">Open verification page</a>
+                                    <form id="predict-age-form" action="{{ url_for('verification.predict_age') }}" method="POST" style="display:inline;margin-left:8px;">
+                                        <button type="submit" class="btn btn-ghost">Predict age</button>
+                                    </form>
+                                    <div id="predict-result" role="status" aria-live="polite" style="display:inline-block;margin-left:12px;font-weight:600;"></div>
+                                </div>
+                            {% endif %}
+                        </section>
+
+
+                        {% if current_user.is_admin and (pending_verifications or pending_items or pending_listing_changes or pending_rentals) %}
+                            <section class="card admin-card">
+                                <div class="card-head">
+                                    <h3>Pending verifications</h3>
+                                    <p>{{ pending_verifications|length }} member{{ 's' if pending_verifications|length != 1 else '' }} awaiting review.</p>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Admin commission total:</strong> Rs {{ admin_earnings }}</p>
+                                </div>
+                                <ul class="admin-list">
+                                    {% for u in pending_verifications %}
+                                        <li>
+                                            <span class="chip-avatar sm">{{ u.username[0]|upper }}</span>
+                                            <div class="admin-meta">
+                                                <strong>{{ u.username }}</strong>
+                                                <span>{{ u.full_name if u.full_name else '—' }} · {{ u.email }}</span>
+                                                {% if u.national_id_image %}
+                                                    <img src="{{ url_for('static', filename='uploads/' + u.national_id_image) }}" alt="Uploaded national ID for {{ u.username }}" class="admin-thumb">
+                                                {% endif %}
+                                            </div>
+                                            <div class="admin-actions">
+                                                <form method="POST" action="{{ url_for('profile.admin_verify', user_id=u.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>
+                                                <form method="POST" action="{{ url_for('profile.admin_verify', user_id=u.id, action='reject') }}"><button class="btn btn-ghost btn-sm">Reject</button></form>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                {% if pending_items %}
+                                    <div style="border-top:1px solid var(--line); margin-top:8px; padding-top:8px">
+                                        <h4 style="margin:0 0 8px">Pending listings</h4>
+                                        <ul class="admin-list">
+                                            {% for it in pending_items %}
+                                                <li>
+                                                    <div class="admin-meta">
+                                                        <strong>{{ it.name }}</strong>
+                                                        <span>{{ it.category }} · {{ it.location }}</span>
+                                                        <img src="{{ url_for('static', filename='uploads/' + it.image) if it.image and it.image.startswith('user_') else it.image }}" alt="{{ it.name }}" class="admin-thumb">
+                                                    </div>
+                                                    <div class="admin-actions">
+                                                        <form method="POST" action="{{ url_for('profile.admin_item_action', item_id=it.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>
+                                                        <form method="POST" action="{{ url_for('profile.admin_item_action', item_id=it.id, action='reject') }}"><button class="btn btn-ghost btn-sm">Reject</button></form>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
+                                {% if pending_listing_changes %}
+                                    <div style="border-top:1px solid var(--line); margin-top:8px; padding-top:8px">
+                                        <h4 style="margin:0 0 8px">Pending listing changes</h4>
+                                        <ul class="admin-list">
+                                            {% for ch in pending_listing_changes %}
+                                                <li>
+                                                    <div class="admin-meta">
+                                                        <strong>{{ ch.item.name }}</strong>
+                                                        <span>Proposed by @{{ ch.proposer.username }} · {{ ch.created_at.strftime('%b %d') }}</span>
+                                                    </div>
+                                                    <div class="admin-actions">
+                                                        <form method="POST" action="{{ url_for('profile.admin_listing_change_action', change_id=ch.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>
+                                                        <form method="POST" action="{{ url_for('profile.admin_listing_change_action', change_id=ch.id, action='reject') }}"><button class="btn btn-ghost btn-sm">Reject</button></form>
+                                                        <details style="margin-top:6px;"><summary>View proposed changes</summary>
+                                                            <pre style="white-space:pre-wrap;max-height:180px;overflow:auto;">{{ ch.new_data }}</pre>
+                                                        </details>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
+                                {% if pending_rentals %}
+                                    <div style="border-top:1px solid var(--line); margin-top:8px; padding-top:8px">
+                                        <h4 style="margin:0 0 8px">Pending rentals (orders)</h4>
+                                        <ul class="admin-list">
+                                            {% for pr in pending_rentals %}
+                                                <li>
+                                                    <div class="admin-meta">
+                                                        <strong>{{ pr.item.name }}</strong>
+                                                        <span>Requested by @{{ pr.renter.username }} · {{ pr.start_date }} → {{ pr.end_date }} · Rs {{ '{:,}'.format(pr.total_amount) }}</span>
+                                                    </div>
+                                                    <div class="admin-actions">
+                                                        <form method="POST" action="{{ url_for('profile.admin_rental_action', rental_id=pr.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>
+                                                        <form method="POST" action="{{ url_for('profile.admin_rental_action', rental_id=pr.id, action='decline') }}"><button class="btn btn-ghost btn-sm">Decline</button></form>
+                                                        <form method="POST" action="{{ url_for('profile.admin_rental_action', rental_id=pr.id, action='complete') }}"><button class="btn btn-ghost btn-sm">Mark completed</button></form>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </section>
+                        {% endif %}
+
+                        <section class="card form-card" id="personal">                            <div class="card-head">
+                                <h3>Personal details</h3>
+                                <p>This information appears on your public profile.</p>
+                            </div>
+                            <form action="{{ url_for('profile.update_profile') }}" method="POST" novalidate>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label for="full_name">Full name</label>
+                                        <input id="full_name" name="full_name" type="text" value="{{ user.full_name }}" placeholder="Your full name" autocomplete="name">
+                                    </div>
+                                    <div class="field">
+                                        <label for="username">Username</label>
+                                        <input id="username" type="text" value="{{ user.username }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label for="email">Email</label>
+                                        <input id="email" type="email" value="{{ user.email }}" disabled>
+                                    </div>
+                                    <div class="field">
+                                        <label for="phone">Phone</label>
+                                        <input id="phone" name="phone" type="tel" value="{{ user.phone }}" placeholder="+977 98XXXXXXXX" autocomplete="tel">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="location">Location</label>
+                                    <input id="location" name="location" type="text" value="{{ user.location }}" placeholder="City or neighbourhood" autocomplete="address-level2">
+                                </div>
+                                <div class="field">
+                                    <label for="bio">Bio</label>
+                                    <textarea id="bio" name="bio" rows="4" maxlength="500" placeholder="Tell neighbours what you love to share…">{{ user.bio }}</textarea>
+                                    <span class="field-hint">Up to 500 characters.</span>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </form>
+                        </section>
+
+                        <section class="card about-card" id="about">
+                            <div class="card-head">
+                                <h3>About</h3>
+                            </div>
+                            <p class="about-bio">{{ user.bio if user.bio else 'No bio yet. Add a short description about yourself.' }}</p>
+                            <ul class="about-list">
+                                <li>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10.2c0 5.7-8 10.3-8 10.3S4 15.9 4 10.2a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10.2" r="2.6"/></svg>
+                                    <span>Lives in <strong>{{ user.location if user.location else '—' }}</strong></span>
+                                </li>
+                                <li>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3.5"/><path d="M5.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5"/></svg>
+                                    <span>Member of AnyRent</span>
+                                </li>
+                            </ul>
+                        </section>
+
+                        <section class="card account-card">
+                            <div class="card-head">
+                                <h3>Account</h3>
+                            </div>
+                            <a class="account-row" href="{{ url_for('marketplace.items') }}">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+                                <span>Browse marketplace</span>
+                                <em>→</em>
+                            </a>
+                            <a class="account-row" href="{{ url_for('logout') }}">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8V5.5L4 12l10 6.5V16"/><path d="M9 12h11"/></svg>
+                                <span>Log out</span>
+                                <em>→</em>
+                            </a>
+                        </section>
+                    </aside>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const picInput = document.getElementById('profile_pic_input');
+        const picForm = document.getElementById('pic-form');
+
+        if (picInput && picForm) {
+            picInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById('avatar-img');
+                    if (img.tagName === 'IMG') {
+                        img.src = e.target.result;
+                    } else {
+                        const newImg = document.createElement('img');
+                        newImg.id = 'avatar-img';
+                        newImg.src = e.target.result;
+                        newImg.alt = 'Profile picture preview';
+                        img.replaceWith(newImg);
+                    }
+                };
+                reader.readAsDataURL(file);
+                picForm.submit();
+            });
+        }
+
+        const nidInput = document.getElementById('national_id_input');
+        const nidLabel = document.querySelector('.verify-form .file-drop span');
+        if (nidInput && nidLabel) {
+            nidInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) nidLabel.textContent = file.name;
+            });
+        }
+
+        const videoInput = document.getElementById('item_video');
+        const videoPreview = document.getElementById('video-preview');
+        if (videoInput && videoPreview) {
+            videoInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file) { videoPreview.classList.add('hidden'); videoPreview.removeAttribute('src'); return; }
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    videoPreview.src = e.target.result;
+                    videoPreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        document.querySelectorAll('.reply-form').forEach(function (form) {
+            const imgInput = form.querySelector('.msg-img-input');
+            const vidInput = form.querySelector('.msg-vid-input');
+            const preview = form.querySelector('.reply-preview');
+            const imgPrev = form.querySelector('.reply-preview-media');
+            const vidPrev = form.querySelector('video.reply-preview-media');
+            const clearBtn = form.querySelector('.msg-clear');
+
+            function showPreview(file, el) {
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    el.src = e.target.result;
+                    imgPrev.classList.add('hidden');
+                    vidPrev.classList.add('hidden');
+                    el.classList.remove('hidden');
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            if (imgInput) imgInput.addEventListener('change', function () {
+                showPreview(this.files[0], imgPrev);
+            });
+            if (vidInput) vidInput.addEventListener('change', function () {
+                showPreview(this.files[0], vidPrev);
+            });
+            if (clearBtn) clearBtn.addEventListener('click', function () {
+                if (imgInput) imgInput.value = '';
+                if (vidInput) vidInput.value = '';
+                imgPrev.classList.add('hidden');
+                vidPrev.classList.add('hidden');
+                preview.classList.add('hidden');
+            });
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/profile_predict.js') }}"></script>
+{% endblock %}

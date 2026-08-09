@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/verification.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="verify-page">
+    <div class="verify-panel">
+        <div class="verify-title">
+            <h1>Train Age Template Photos</h1>
+            <p>Upload 2 to 4 labeled photos so the system can estimate age from a new selfie.</p>
+        </div>
+
+        <form action="{{ url_for('verification.age_templates') }}" method="POST" enctype="multipart/form-data" class="verify-form">
+            {% for index in range(1, 5) %}
+                <div class="field-group">
+                    <label for="photo_{{ index }}">Photo {{ index }}</label>
+                    <input id="photo_{{ index }}" name="photo_{{ index }}" type="file" accept="image/*">
+                </div>
+                <div class="field-group">
+                    <label for="age_{{ index }}">Age label {{ index }}</label>
+                    <input id="age_{{ index }}" name="age_{{ index }}" type="number" min="1" max="120" placeholder="Age for photo {{ index }}">
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary">Upload templates</button>
+        </form>
+
+        {% if existing_templates %}
+            <div class="photo-preview-row">
+                <h2>Saved template photos</h2>
+                <div class="template-grid">
+                    {% for template in existing_templates %}
+                        <figure class="photo-preview">
+                            <img src="{{ url_for('static', filename='uploads/' + template.image_filename) }}" alt="Template age {{ template.age_label }}">
+                            <figcaption>Age {{ template.age_label }}</figcaption>
+                        </figure>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if not face_supported %}
+            <div class="warning-box">
+                Face recognition is unavailable on this server because the required Python library is not installed. Install `face_recognition` and `dlib` to enable age-template matching.
+            </div>
+        {% endif %}
+
+        <div class="verify-footer">
+            <p><strong>Note:</strong> This age prediction is based on comparing your selfie to your labeled template photos.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/verification.js') }}"></script>
+{% endblock %}

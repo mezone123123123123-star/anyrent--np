@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Rentify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #1D4ED8;
+            --primary-hover: #1E40AF;
+            --deep-navy: #0F172A;
+            --accent-light-blue: #E0F2FE;
+            --bg-light: #F8FAFC;
+            --text-main: #334155;
+            --text-muted: #64748B;
+            --white: #FFFFFF;
+            --border-color: #E2E8F0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background-color: var(--white);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--deep-navy);
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 48px auto;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background-color: var(--white);
+            color: var(--primary-blue);
+            border: 2px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--accent-light-blue);
+            color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+        }
+
+        .logo span {
+            color: var(--deep-navy);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-main);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-blue);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--deep-navy);
+            border-radius: 2px;
+        }
+        .hero {
+            background-color: var(--bg-light);
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 300px;
+            height: 300px;
+            background: var(--accent-light-blue);
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--deep-navy);
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+        }
+
+        .mission-card {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .mission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-light-blue);
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background-color: var(--accent-light-blue);
+            color: var(--primary-blue);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+        }
+
+        .mission-card h3 {
+            font-size: 1.5rem;
+            color: var(--deep-navy);
+            margin-bottom: 12px;
+        }
+        .features-section {
+            background-color: var(--bg-light);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background-color: var(--white);
+            padding: 32px 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-blue);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h4 {
+            font-size: 1.25rem;
+            color: var(--deep-navy);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .stats-banner {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 60px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--accent-light-blue);
+            font-weight: 500;
+        }
+        .cta-section {
+            background: linear-gradient(135deg, var(--deep-navy) 0%, #1E293B 100%);
+            color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 64px 32px;
+            margin: 80px auto;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .cta-subtitle {
+            color: #94A3B8;
+            max-width: 600px;
+            margin: 0 auto 32px auto;
+            font-size: 1.1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .footer {
+            background-color: var(--deep-navy);
+            color: #94A3B8;
+            padding: 60px 0 30px 0;
+            border-top: 1px solid #1E293B;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand .logo {
+            color: var(--white);
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .footer-brand p {
+            font-size: 0.95rem;
+            max-width: 300px;
+        }
+
+        .footer-column h5 {
+            color: var(--white);
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #1E293B;
+            font-size: 0.875rem;
+        }
+        @media (max-width: 900px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none; /* Hide on mobile; can be toggled with JS */
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background-color: var(--white);
+                flex-direction: column;
+                padding: 24px;
+                border-bottom: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 1.875rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container nav-container">
+            <a href="#" class="logo">Rentify<span>.</span></a>
+            
+            <nav class="nav-links">
+                <a href="#" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Categories</a>
+                <a href="#" class="nav-link">How It Works</a>
+                <a href="#" class="nav-link active">About Us</a>
+                <a href="#" class="nav-link">Contact</a>
+            </nav>
+
+            <a href="#" class="btn btn-primary">Get Started</a>
+
+            <div class="menu-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <h1 class="hero-title">Access Anything.<br>Own Nothing.</h1>
+            <p class="hero-subtitle">
+                Rentify is transforming ownership. We make renting seamless, affordable, and sustainable across every category imaginable—from real estate and vehicles to high-end cameras and tools.
+            </p>
+            <a href="#" class="btn btn-primary">Explore Categories</a>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Driven by Purpose</h2>
+                <p class="section-subtitle">We are building a future where access replaces ownership, empowering users to experience more while consuming less.</p>
+            </div>
+
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Ultimate Flexibility</h3>
+                    <p>Why buy something you only need for a day, a week, or a month? Rentify gives you the freedom to access premium gear, vehicles, and living spaces on your own terms without long-term commitments.</p>
+                </div>
+
+                <div class="mission-card">
+                    <div class="card-icon">🌱</div>
+                    <h3>Sustainable Living</h3>
+                    <p>By promoting a circular sharing economy, we help reduce manufacturing demand and landfill waste. Renting maximizes item utility, making every product count for a cleaner planet.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding features-section">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Why Choose Rentify?</h2>
+                <p class="section-subtitle">Designed to give you peace of mind, seamless accessibility, and financial freedom.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h4>Endless Variety</h4>
+                    <p>From apartments and luxury cars to DSLR cameras and power tools, find everything in one platform.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h4>Verified & Safe</h4>
+                    <p>Enjoy secure end-to-end payments, identity-verified users, and optional item insurance protection.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h4>Affordability First</h4>
+                    <p>Save upfront costs. Pay only for the duration you actually use the item, vehicle, or property.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Seamless Booking</h4>
+                    <p>Instant online reservations, clear communication channels, and fast handoffs in just a few clicks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-banner">
+        <div class="container">
+            <div class="stats-grid">
+                <div>
+                    <div class="stat-number">50k+</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div>
+                    <div class="stat-number">100k+</div>
+                    <div class="stat-label">Items Listed</div>
+                </div>
+                <div>
+                    <div class="stat-number">120+</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div>
+                    <div class="stat-number">4.9★</div>
+                    <div class="stat-label">Average Rating</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <section class="cta-section">
+            <h2 class="cta-title">Ready to Experience Unlimited Access?</h2>
+            <p class="cta-subtitle">Join thousands of smart renters today. Start exploring millions of items or list your idle assets to earn extra income.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-secondary">Start Browsing</a>
+                <a href="#" class="btn btn-primary">List Your Item</a>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">Rentify<span>.</span></a>
+                    <p>The modern multi-category rental marketplace powering a flexible, circular economy worldwide.</p>
+                </div>
+
+                <div class="footer-column">
+                    <h5>Platform</h5>
+                    <ul>
+                        <li><a href="#">How it Works</a></li>
+                        <li><a href="#">Categories</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Rentify Shield</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h5>Company</h5>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h5>Support</h5>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Safety Guidelines</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Rentify, Inc. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Items | Rent Anything{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/items.css') }}">
+{% endblock %}
+
+{% block content %}
+    <main class="items-page">
+
+        <section class="items-header">
+            <div class="header-text">
+                <span class="eyebrow">THE MARKETPLACE</span>
+                <h1>Rent what you need.</h1>
+                <p>Why buy something you'll use for a few days? Find it. Rent it. Return it.</p>
+            </div>
+
+            {% if current_user.is_authenticated %}
+                <a class="list-button" href="{{ url_for('profile.profile') }}#listings">
+                    <i class="fa-solid fa-plus"></i> List an Item
+                </a>
+            {% else %}
+                <a class="list-button" href="{{ url_for('auth') }}">
+                    <i class="fa-solid fa-plus"></i> List an Item
+                </a>
+            {% endif %}
+        </section>
+
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="text" placeholder="Search cameras, guitars, bikes, projectors..." oninput="searchItems()">
+        </div>
+
+        <div class="categories">
+            <button class="category active" onclick="filterCategory('All', this)">All</button>
+            <button class="category" onclick="filterCategory('Camera', this)"><i class="fa-solid fa-camera"></i> Cameras</button>
+            <button class="category" onclick="filterCategory('Music', this)"><i class="fa-solid fa-guitar"></i> Music</button>
+            <button class="category" onclick="filterCategory('Bike', this)"><i class="fa-solid fa-bicycle"></i> Bikes</button>
+            <button class="category" onclick="filterCategory('Electronics', this)"><i class="fa-solid fa-laptop"></i> Electronics</button>
+            <button class="category" onclick="filterCategory('Other', this)"><i class="fa-solid fa-box"></i> Other</button>
+        </div>
+
+        <section class="marketplace-section">
+            <div class="marketplace-top">
+                <div>
+                    <h2>Available Items</h2>
+                    <p>Find something useful without buying it.</p>
+                </div>
+                <select id="sortSelect" onchange="sortItems()">
+                    <option value="default">Sort by</option>
+                    <option value="low">Price: Low → High</option>
+                    <option value="high">Price: High → Low</option>
+                </select>
+            </div>
+
+            <div id="itemGrid" class="item-grid"></div>
+        </section>
+
+        <section id="itemDetails" class="item-details hidden">
+            <button class="back-button" onclick="closeDetails()">
+                <i class="fa-solid fa-arrow-left"></i> Back to items
+            </button>
+
+            <div id="detailContent"></div>
+
+            <div class="related-section">
+                <div class="related-heading">
+                    <span>MORE OPTIONS</span>
+                    <h2 id="relatedTitle">More like this</h2>
+                </div>
+                <div id="relatedGrid" class="item-grid"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="rent-modal" id="rentModal" role="dialog" aria-modal="true" aria-labelledby="rentModalTitle">
+        <div class="rent-modal-card">
+            <button class="rent-close" type="button" onclick="closeRentModal()" aria-label="Close">&times;</button>
+            <span class="rent-modal-eyebrow">REQUEST A RENTAL</span>
+            <h3 id="rentModalTitle">Rent this item</h3>
+            <p class="rent-item-line" id="rentItemLine"></p>
+            <form action="{{ url_for('marketplace.rent_item') }}" method="POST" novalidate>
+                <input type="hidden" name="item_id" id="rentItemId">
+                <div class="rent-dates">
+                    <div class="rent-date-field">
+                        <label for="rentStart">Start date</label>
+                        <input type="date" id="rentStart" name="start_date" required>
+                    </div>
+                    <div class="rent-date-field">
+                        <label for="rentEnd">Return date</label>
+                        <input type="date" id="rentEnd" name="end_date" required>
+                    </div>
+                </div>
+                <p class="rent-total" id="rentTotal"></p>
+                <button type="submit" class="btn btn-primary rent-submit">Send rental request</button>
+                <p class="rent-note"><i class="fa-solid fa-shield-halved"></i> The owner approves before anything is confirmed.</p>
+            </form>
+        </div>
+    </div>
+
+    <div class="rent-modal" id="msgModal" role="dialog" aria-modal="true" aria-labelledby="msgModalTitle">
+        <div class="rent-modal-card">
+            <button class="rent-close" type="button" onclick="closeMsgModal()" aria-label="Close">&times;</button>
+            <span class="rent-modal-eyebrow">TALK TO THE OWNER</span>
+            <h3 id="msgModalTitle">Message the owner</h3>
+            <p class="rent-item-line" id="msgItemLine"></p>
+            <form action="{{ url_for('marketplace.send_message', item_id=0) }}" method="POST" id="msgForm" enctype="multipart/form-data">
+                <input type="hidden" name="item_id" id="msgItemId">
+                <label for="msgBody">Your message</label>
+                <textarea id="msgBody" name="body" rows="3" placeholder="Hi! Is this still available for the dates I need?"></textarea>
+                <div class="msg-attach-row">
+                    <label class="attach-btn" title="Attach an image">
+                        <i class="fa-solid fa-image"></i> Image
+                        <input type="file" name="message_image" accept="image/*" hidden class="msg-img-input">
+                    </label>
+                    <label class="attach-btn" title="Attach a video">
+                        <i class="fa-solid fa-video"></i> Video
+                        <input type="file" name="message_video" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v" hidden class="msg-vid-input">
+                    </label>
+                </div>
+                <div class="msg-preview-row hidden" id="msgPreviewRow">
+                    <img id="msgImgPreview" class="msg-preview-media hidden" alt="Image preview">
+                    <video id="msgVidPreview" class="msg-preview-media hidden" controls muted playsinline preload="metadata"></video>
+                    <button type="button" class="msg-clear" onclick="clearMsgAttachments()">Remove</button>
+                </div>
+                <button type="submit" class="btn btn-primary rent-submit">Send message</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.ITEMS = {{ items_json | safe }};
+        window.SAVED = {{ saved_ids | safe }};
+        window.LOGGED_IN = {{ 'true' if current_user.is_authenticated else 'false' }};
+        window.LOGIN_URL = "{{ url_for('auth') }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/items.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/reviews.js') }}"></script>
+    <script>
+        function readMsgAttachment(input, previewEl) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewEl.src = e.target.result;
+                document.getElementById('msgPreviewRow').classList.remove('hidden');
+                document.getElementById('msgImgPreview').classList.add('hidden');
+                document.getElementById('msgVidPreview').classList.add('hidden');
+                previewEl.classList.remove('hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+        function clearMsgAttachments() {
+            const imgInput = document.querySelector('#msgForm .msg-img-input');
+            const vidInput = document.querySelector('#msgForm .msg-vid-input');
+            if (imgInput) imgInput.value = '';
+            if (vidInput) vidInput.value = '';
+            document.getElementById('msgImgPreview').classList.add('hidden');
+            document.getElementById('msgVidPreview').classList.add('hidden');
+            document.getElementById('msgPreviewRow').classList.add('hidden');
+        }
+        const msgImgInput = document.querySelector('#msgForm .msg-img-input');
+        const msgVidInput = document.querySelector('#msgForm .msg-vid-input');
+        if (msgImgInput) msgImgInput.addEventListener('change', function () {
+            readMsgAttachment(this, document.getElementById('msgImgPreview'));
+        });
+        if (msgVidInput) msgVidInput.addEventListener('change', function () {
+            readMsgAttachment(this, document.getElementById('msgVidPreview'));
+        });
+        const originalOpenMsg = window.openMsgModal;
+        window.openMsgModal = function (id) {
+            clearMsgAttachments();
+            if (originalOpenMsg) originalOpenMsg(id);
+        };
+    </script>
+{% endblock %}

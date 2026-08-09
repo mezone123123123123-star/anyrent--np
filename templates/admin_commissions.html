@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Commissions{% endblock %}
+
+{% block content %}
+<section class="page">
+  <div class="container">
+    <h1>Commission breakdown</h1>
+    <p>List of rentals contributing to admin commissions.</p>
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Rental</th><th>Item</th><th>Renter</th><th>Owner</th><th>Total</th><th>Deposit</th><th>Commission</th><th>Status</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        {% for c in commissions %}
+          <tr>
+            <td>{{ c.id }}</td>
+            <td><a href="#">#{{ c.rental_id }}</a></td>
+            <td>{{ c.item_name or '-' }}</td>
+            <td>{{ c.renter or '-' }}</td>
+            <td>{{ c.owner or '-' }}</td>
+            <td>Rs {{ '{:,}'.format(c.total_amount) }}</td>
+            <td>Rs {{ '{:,}'.format(c.deposit_amount) }}</td>
+            <td>Rs {{ '{:,}'.format(c.amount) }}</td>
+            <td>{{ c.status }}</td>
+            <td>{{ c.created_at }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
