@@ -26,7 +26,7 @@ def save_message_file(file, prefix):
     """Save an uploaded message attachment into the uploads folder."""
     fname = secure_filename(file.filename)
     stored = f"{prefix}_{current_user.id}_{fname}"
-    upload_dir = os.path.join(current_app.static_folder, 'uploads')
+    upload_dir = current_app.config['UPLOAD_FOLDER']
     os.makedirs(upload_dir, exist_ok=True)
     file.save(os.path.join(upload_dir, stored))
     return stored
@@ -175,7 +175,7 @@ def upload_picture():
     filename = secure_filename(file.filename)
     stored_name = f"user_{current_user.id}_{filename}"
 
-    upload_dir = os.path.join(current_app.static_folder, 'uploads')
+    upload_dir = current_app.config['UPLOAD_FOLDER']
     os.makedirs(upload_dir, exist_ok=True)
 
     file.save(os.path.join(upload_dir, stored_name))
@@ -207,7 +207,7 @@ def verify_identity():
     filename = secure_filename(file.filename)
     stored_name = f"nid_{current_user.id}_{filename}"
 
-    upload_dir = os.path.join(current_app.static_folder, 'uploads')
+    upload_dir = current_app.config['UPLOAD_FOLDER']
     os.makedirs(upload_dir, exist_ok=True)
 
     file.save(os.path.join(upload_dir, stored_name))
@@ -283,7 +283,7 @@ def add_item():
             return redirect(url_for('profile.profile') + '#listings')
         vname = secure_filename(video_file.filename)
         vstored = f"item_video_{current_user.id}_{vname}"
-        upload_dir = os.path.join(current_app.static_folder, 'uploads')
+        upload_dir = current_app.config['UPLOAD_FOLDER']
         os.makedirs(upload_dir, exist_ok=True)
         video_file.save(os.path.join(upload_dir, vstored))
         video = vstored
@@ -471,7 +471,7 @@ def edit_item(item_id):
             return redirect(url_for('profile.profile') + '#listings')
         vname = secure_filename(video_file.filename)
         vstored = f"item_video_{current_user.id}_{vname}"
-        upload_dir = os.path.join(current_app.static_folder, 'uploads')
+        upload_dir = current_app.config['UPLOAD_FOLDER']
         os.makedirs(upload_dir, exist_ok=True)
         video_file.save(os.path.join(upload_dir, vstored))
         video = vstored

@@ -60,13 +60,13 @@
             <div class="photo-preview-row">
                 {% if current_user.national_id_image %}
                     <figure class="photo-preview">
-                        <img src="{{ url_for('static', filename='uploads/' + current_user.national_id_image) }}" alt="Uploaded national ID">
+                        <img src="{{ url_for('uploads', filename=current_user.national_id_image) }}" alt="Uploaded national ID">
                         <figcaption>National ID</figcaption>
                     </figure>
                 {% endif %}
                 {% if current_user.selfie_image %}
                     <figure class="photo-preview">
-                        <img src="{{ url_for('static', filename='uploads/' + current_user.selfie_image) }}" alt="Uploaded selfie">
+                        <img src="{{ url_for('uploads', filename=current_user.selfie_image) }}" alt="Uploaded selfie">
                         <figcaption>Selfie</figcaption>
                     </figure>
                 {% endif %}

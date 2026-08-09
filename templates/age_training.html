@@ -32,7 +32,7 @@
                 <div class="template-grid">
                     {% for template in existing_templates %}
                         <figure class="photo-preview">
-                            <img src="{{ url_for('static', filename='uploads/' + template.image_filename) }}" alt="Template age {{ template.age_label }}">
+                            <img src="{{ url_for('uploads', filename=template.image_filename) }}" alt="Template age {{ template.age_label }}">
                             <figcaption>Age {{ template.age_label }}</figcaption>
                         </figure>
                     {% endfor %}

@@ -1,4 +1,7 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, session
+import os
+from pathlib import Path
+
+from flask import Flask, render_template, redirect, url_for, request, flash, session, send_from_directory
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import inspect
@@ -8,8 +11,24 @@ from marketplace import marketplace_bp
 from verification import verification_bp
 
 app = Flask(__name__, static_folder='templates/static')
-app.config['SECRET_KEY'] = 'your-super-secret-key-here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
+# Vercel's deployed source is read-only.  Runtime files must live in /tmp;
+# locally we retain the conventional instance directory for development.
+runtime_dir = Path('/tmp/anyrent') if os.getenv('VERCEL') else Path(app.instance_path)
+runtime_dir.mkdir(parents=True, exist_ok=True)
+upload_dir = runtime_dir / 'uploads'
+upload_dir.mkdir(parents=True, exist_ok=True)
+
+database_url = os.getenv('DATABASE_URL')
+if database_url and database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+elif database_url and database_url.startswith('postgresql://'):
+    database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
+
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'anyrent-demo-secret-change-me')
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or f"sqlite:///{runtime_dir / 'database.db'}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = str(upload_dir)
 app.config['MAX_CONTENT_LENGTH'] = 120 * 1024 * 1024
 
 db.init_app(app)
@@ -111,30 +130,10 @@ with app.app_context():
                                 reviews=6 + (seed_items.index(s) * 3), **s))
         db.session.commit()
 
-    # Run DB migration and template indexing to ensure phash column and index exist
-    try:
-        import runpy, os
-        basedir = os.path.dirname(__file__)
-        migrate_path = os.path.join(basedir, 'migrate_add_phash.py')
-        indexer_path = os.path.join(basedir, 'index_templates_to_db.py')
-        listing_change_migrate = os.path.join(basedir, 'migrate_create_listing_change.py')
-        print('[AnyRent] Running DB migration (migrate_add_phash.py)')
-        runpy.run_path(migrate_path, run_name='__main__')
-        print('[AnyRent] Running template indexer (index_templates_to_db.py)')
-        runpy.run_path(indexer_path, run_name='__main__')
-        print('[AnyRent] Ensuring listing change migration (migrate_create_listing_change.py)')
-        runpy.run_path(listing_change_migrate, run_name='__main__')
-        print('[AnyRent] Running quantity migration (migrate_add_quantity.py)')
-        quantity_migrate = os.path.join(basedir, 'migrate_add_quantity.py')
-        runpy.run_path(quantity_migrate, run_name='__main__')
-        print('[AnyRent] Running video migration (migrate_add_video.py)')
-        video_migrate = os.path.join(basedir, 'migrate_add_video.py')
-        runpy.run_path(video_migrate, run_name='__main__')
-        print('[AnyRent] Running message attachments migration (migrate_add_message_attachments.py)')
-        msg_migrate = os.path.join(basedir, 'migrate_add_message_attachments.py')
-        runpy.run_path(msg_migrate, run_name='__main__')
-    except Exception as e:
-        print('[AnyRent] Failed to run migration/indexer:', e)
+@app.route('/uploads/<path:filename>')
+def uploads(filename):
+    """Serve temporary uploads created during the current serverless instance."""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/')
 def home():

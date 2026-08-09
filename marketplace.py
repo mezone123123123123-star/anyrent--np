@@ -34,7 +34,7 @@ def item_to_dict(item):
         'seller': owner.username if owner else 'AnyRent',
         'verified': True,
         'image': item.image,
-        'video': url_for('static', filename='uploads/' + item.video) if item.video else '',
+        'video': url_for('uploads', filename=item.video) if item.video else '',
         'description': item.description,
     }
 

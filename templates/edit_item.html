@@ -46,7 +46,7 @@
                 <input id="item_video" name="video" type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v" class="video-input">
                 <span class="field-hint">MP4, WebM, OGG, MOV or M4V · max ~120 MB. Upload a new file to replace the current one.</span>
                 {% if item.video %}
-                    <video class="video-preview" src="{{ url_for('static', filename='uploads/' + item.video) }}" controls muted playsinline></video>
+                    <video class="video-preview" src="{{ url_for('uploads', filename=item.video) }}" controls muted playsinline></video>
                 {% endif %}
                 <video id="video-preview" class="video-preview hidden" controls muted playsinline></video>
             </div>

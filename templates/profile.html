@@ -89,7 +89,7 @@
                             <form action="{{ url_for('profile.upload_picture') }}" method="POST" enctype="multipart/form-data" id="pic-form">
                                 <div class="avatar">
                                     {% if user.profile_pic %}
-                                        <img id="avatar-img" src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="{{ user.username }}'s profile picture">
+                                        <img id="avatar-img" src="{{ url_for('uploads', filename=user.profile_pic) }}" alt="{{ user.username }}'s profile picture">
                                     {% else %}
                                         <span id="avatar-img" class="avatar-fallback">{{ user.username[0]|upper }}</span>
                                     {% endif %}
@@ -338,12 +338,12 @@
                                                     <div class="msg {{ 'mine' if m.sender_id == user.id else '' }}">
                                                         {% if m.body %}<p>{{ m.body }}</p>{% endif %}
                                                         {% if m.image %}
-                                                            <a href="{{ url_for('static', filename='uploads/' + m.image) }}" target="_blank" rel="noopener" class="msg-attachment-link">
-                                                                <img class="msg-attachment msg-image" src="{{ url_for('static', filename='uploads/' + m.image) }}" alt="Attached image" loading="lazy">
+                                                            <a href="{{ url_for('uploads', filename=m.image) }}" target="_blank" rel="noopener" class="msg-attachment-link">
+                                                                <img class="msg-attachment msg-image" src="{{ url_for('uploads', filename=m.image) }}" alt="Attached image" loading="lazy">
                                                             </a>
                                                         {% endif %}
                                                         {% if m.video %}
-                                                            <video class="msg-attachment msg-video" src="{{ url_for('static', filename='uploads/' + m.video) }}" controls muted playsinline preload="metadata"></video>
+                                                            <video class="msg-attachment msg-video" src="{{ url_for('uploads', filename=m.video) }}" controls muted playsinline preload="metadata"></video>
                                                         {% endif %}
                                                         <span>{{ m.created_at.strftime('%b %d, %H:%M') }}</span>
                                                     </div>
@@ -530,7 +530,7 @@
                                     </div>
                                 </div>
                                 {% if user.national_id_image %}
-                                    <img class="verify-preview" src="{{ url_for('static', filename='uploads/' + user.national_id_image) }}" alt="Your uploaded national ID">
+                                    <img class="verify-preview" src="{{ url_for('uploads', filename=user.national_id_image) }}" alt="Your uploaded national ID">
                                 {% endif %}
                             {% else %}
                                 <div class="verify-status">
@@ -568,7 +568,7 @@
                                                 <strong>{{ u.username }}</strong>
                                                 <span>{{ u.full_name if u.full_name else '—' }} · {{ u.email }}</span>
                                                 {% if u.national_id_image %}
-                                                    <img src="{{ url_for('static', filename='uploads/' + u.national_id_image) }}" alt="Uploaded national ID for {{ u.username }}" class="admin-thumb">
+                                                    <img src="{{ url_for('uploads', filename=u.national_id_image) }}" alt="Uploaded national ID for {{ u.username }}" class="admin-thumb">
                                                 {% endif %}
                                             </div>
                                             <div class="admin-actions">
@@ -587,7 +587,7 @@
                                                     <div class="admin-meta">
                                                         <strong>{{ it.name }}</strong>
                                                         <span>{{ it.category }} · {{ it.location }}</span>
-                                                        <img src="{{ url_for('static', filename='uploads/' + it.image) if it.image and it.image.startswith('user_') else it.image }}" alt="{{ it.name }}" class="admin-thumb">
+                                                        <img src="{{ url_for('uploads', filename=it.image) if it.image and it.image.startswith('user_') else it.image }}" alt="{{ it.name }}" class="admin-thumb">
                                                     </div>
                                                     <div class="admin-actions">
                                                         <form method="POST" action="{{ url_for('profile.admin_item_action', item_id=it.id, action='approve') }}"><button class="btn btn-primary btn-sm">Approve</button></form>

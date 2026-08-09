@@ -28,7 +28,7 @@ def calculate_age(birth_date: date) -> int:
 def save_upload(file, prefix: str) -> tuple[str, str]:
     filename = secure_filename(file.filename)
     stored_name = f"{prefix}_{current_user.id}_{filename}"
-    upload_dir = os.path.join(current_app.static_folder, 'uploads')
+    upload_dir = current_app.config['UPLOAD_FOLDER']
     os.makedirs(upload_dir, exist_ok=True)
     file_path = os.path.join(upload_dir, stored_name)
     file.save(file_path)
@@ -60,7 +60,7 @@ def compare_faces(id_path: str, selfie_path: str) -> bool | None:
 
 
 def get_template_file_path(template):
-    return os.path.join(current_app.static_folder, 'uploads', template.image_filename)
+    return os.path.join(current_app.config['UPLOAD_FOLDER'], template.image_filename)
 
 
 def predict_age_from_templates(selfie_path: str, templates):
@@ -214,7 +214,7 @@ def predict_age():
     if selfie and selfie.filename != '':
         selfie_filename, selfie_path = save_upload(selfie, 'predict_selfie')
     elif current_user.selfie_image:
-        selfie_path = os.path.join(current_app.static_folder, 'uploads', current_user.selfie_image)
+        selfie_path = os.path.join(current_app.config['UPLOAD_FOLDER'], current_user.selfie_image)
 
     if not selfie_path or not os.path.exists(selfie_path):
         msg = 'No selfie provided or found for prediction.'
